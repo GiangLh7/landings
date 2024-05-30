@@ -1,0 +1,133 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --foreground-rgb: 0, 0, 0;
+  --background-start-rgb: 214, 219, 220;
+  --background-end-rgb: 255, 255, 255;
+}
+
+/* @media (prefers-color-scheme: dark) {
+  :root {
+    --foreground-rgb: 255, 255, 255;
+    --background-start-rgb: 0, 0, 0;
+    --background-end-rgb: 0, 0, 0;
+  }
+} */
+
+body {
+  background: #000000;
+  color: #FFF;
+}
+
+#my-canvas {
+  position: fixed !important;
+  top: 0;
+  left: 0;
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+.hero {
+  height: 80vh;
+}
+
+.footer {
+  height: 50vh;
+}
+
+.scrolled-reveal {
+  height: 50vh;
+  margin: auto;
+  max-width: 50ch;
+  font-size: 1.2rem;
+}
+
+.scrolled-reveal span {
+  color: hsl(0 0% 100% / 0.2);
+  background-clip: text;
+  background-repeat: no-repeat;
+  background-size: 0% 100%;
+  background-image: linear-gradient(90deg, white, white);
+  animation: scroll-reveal linear forwards;
+  animation-timeline: view();
+  transition: background-size 0.5s;
+}
+
+.scrolled-reveal h2 span {
+  animation-range-start: cover calc(50vh - 100px);
+  animation-range-end: cover calc(50vh);
+}
+
+.scrolled-reveal p span {
+  animation-range-start: cover calc(50vh - 50px);
+  animation-range-end: calc(50vh + 300px);
+}
+
+.scrolled-reveal .section-title {
+  font-size: 2rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  margin-bottom: 2.5rem;
+}
+
+.scrolled-reveal p {
+  line-height: 1.8rem;
+  font-size: 1.25rem;
+}
+
+@keyframes scroll-reveal {
+  to {
+    background-size: 100% 100%;
+  }
+}
+
+.scroller {
+  @apply m-auto max-w-[600px];
+  overflow: hidden;
+  position: relative;
+
+  .scroller__inner {
+    width: max-content;
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 1rem;
+    align-items: center;
+    justify-content: center;
+    animation: scroll 10s linear infinite;
+
+    &:has(li:hover) {
+      animation-play-state: paused;
+    }
+  }
+
+  .tag-list {
+    li {
+      @apply bg-slate-400 p-4 rounded-lg flex-1 text-center;
+    }
+  }
+}
+
+@keyframes scroll {
+  to {
+    transform: translateX(calc(-50% - 0.5rem));
+  }
+}
+
+.dom-element {
+  width: 100%;
+  height: 100%;
+  font-size: clamp(100px, 17vw, 200px);
+  background-color: #000;
+  display: flex;
+  color: white;
+  align-items: center;
+  padding-left: 3vw;
+  line-height: 0.8;
+  font-weight: 700;
+}

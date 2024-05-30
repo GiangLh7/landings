@@ -1,0 +1,51 @@
+.feature-scroller {
+  & > .feat-text {
+    overflow: hidden;
+    background-image: linear-gradient(90deg, black, black);
+    background-clip: text;
+    background-repeat: no-repeat;
+    background-size: 0% 100%;
+    animation: bgSize forwards;
+    animation-timeline: view();
+    animation-range-start: cover 20vh;
+    animation-range-end: cover 150vh;
+
+    .feat {
+      animation: translateObj 2s linear;
+      animation-timeline: view();
+      opacity: 0;
+      animation-delay: 0.5s;
+    }
+
+    .feat-1 {
+      animation-range-start: cover calc(20vh + 50px);
+    }
+
+    .feat-2 {
+      animation-range-start: cover calc(20vh + 100px);
+    }
+
+    .feat-3 {
+      animation-range-start: cover calc(20vh + 200px);
+    }
+  }
+}
+
+@keyframes bgSize {
+  to {
+    background-size: 100% 100%;
+  }
+}
+
+@keyframes translateObj {
+  0% { opacity: 0; scale: 0.8; }
+  50% {
+    top: -80px;
+    opacity: 0.8;
+    scale: 1.2;
+  }
+  100% {
+    top: -160px;
+    opacity: 0.8;
+  }
+}
