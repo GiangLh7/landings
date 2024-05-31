@@ -1,66 +1,83 @@
 /* eslint-disable */
-import { forwardRef, memo, useEffect, useImperativeHandle, useMemo, useRef } from 'react'
-import { useFrame } from 'react-three-fiber'
-import { LinearFilter, Vector2 } from 'three'
-import FBO from './FBO'
-import useSmoothPointer from '../../utils/useSmoothPointer'
-import { useWindowSize } from '@reactuses/core'
+import {
+  forwardRef,
+  memo,
+  useEffect,
+  useImperativeHandle,
+  useMemo,
+  useRef,
+} from "react";
+import { useFrame } from "react-three-fiber";
+import { LinearFilter, Vector2 } from "three";
+import FBO from "./FBO";
+import useSmoothPointer from "../../utils/useSmoothPointer";
+import { useWindowSize } from "@reactuses/core";
 
-const CursorTrail = forwardRef(({
-  width = 128,
-  height = 128
-}, ref) => {
+const CursorTrail = forwardRef(({ width = 128, height = 128 }, ref) => {
+  const fboVelocityRef = useRef();
+  const fboRef = useRef();
+  const viewport = useWindowSize();
+  const uniforms = useMemo(
+    () => ({
+      tVelocity: { value: null },
+      uOpacity: { value: 0 },
+      uAspect: { value: 0 },
+      uPointer: { value: new Vector2() },
+      uVelocity: { value: new Vector2() },
+      uSize: { value: 0.09999 },
+      uTime: { value: 0 },
+    }),
+    [],
+  );
 
-  console.log('CursorTrail...')
-  const fboVelocityRef = useRef()
-  const fboRef = useRef()
-  const viewport = useWindowSize()
-  const uniforms = useMemo(() => ({
-    tVelocity: { value: null },
-    uOpacity: { value: 0 },
-    uAspect: { value: 0 },
-    uPointer: { value: new Vector2() },
-    uVelocity: { value: new Vector2() },
-    uSize: { value: 0.09999 },
-    uTime: { value: 0 }
-  }), []);
+  const uniforms2 = useMemo(
+    () => ({
+      uVelocity: { value: new Vector2() },
+    }),
+    [],
+  );
 
-  const uniforms2 = useMemo(() => ({
-    uVelocity: { value: new Vector2() },
-  }), []);
-
-  const pointer = useSmoothPointer()
+  const pointer = useSmoothPointer();
 
   useFrame((state) => {
     if (fboVelocityRef.current && fboRef.current) {
       const uniVelocity = fboVelocityRef.current.getUniforms();
-      uniVelocity.uVelocity.value.x = pointer.current.velocityX
-      uniVelocity.uVelocity.value.y = pointer.current.velocityY
-    
+      uniVelocity.uVelocity.value.x = pointer.current.velocityX;
+      uniVelocity.uVelocity.value.y = pointer.current.velocityY;
+
       const uni = fboRef.current.getUniforms();
-      uni.tVelocity.value = fboVelocityRef.current.getTexture()
-      uni.uOpacity.value = pointer.current.speedNormalized
-      uni.uSize.value = Math.abs(pointer.current.speedNormalized - 1) * .09999
-      uni.uTime.value = state.clock.elapsedTime
-      uni.uPointer.value.set(pointer.current.normalizedX, 1 - pointer.current.normalizedY)
+      uni.tVelocity.value = fboVelocityRef.current.getTexture();
+      uni.uOpacity.value = pointer.current.speedNormalized;
+      uni.uSize.value = Math.abs(pointer.current.speedNormalized - 1) * 0.09999;
+      uni.uTime.value = state.clock.elapsedTime;
+      uni.uPointer.value.set(
+        pointer.current.normalizedX,
+        1 - pointer.current.normalizedY,
+      );
     }
   });
 
   useEffect(() => {
-    fboRef.current && (fboRef.current.getUniforms().uAspect.value = viewport.width / viewport.height)
-    fboVelocityRef.current && (fboRef.current.getUniforms().uAspect.value = viewport.width / viewport.height);
+    fboRef.current &&
+      (fboRef.current.getUniforms().uAspect.value =
+        viewport.width / viewport.height);
+    fboVelocityRef.current &&
+      (fboRef.current.getUniforms().uAspect.value =
+        viewport.width / viewport.height);
   }, [viewport.width, viewport.height]);
 
   useImperativeHandle(ref, () => {
     return {
-      getTarget() { return fboRef.current.getTexture() }
-    }
-  })
+      getTarget() {
+        return fboRef.current.getTexture();
+      },
+    };
+  });
 
   return (
     <>
       <FBO
-        name='trail'
+        name="trail"
         ref={fboRef}
         width={width}
         height={height}
@@ -178,7 +195,7 @@ const CursorTrail = forwardRef(({
         uniforms={uniforms}
       />
       <FBO
-        name='trail-velocity'
+        name="trail-velocity"
         ref={fboVelocityRef}
         width={width}
         height={height}
@@ -193,12 +210,11 @@ const CursorTrail = forwardRef(({
         uniforms={uniforms2}
         rtOptions={{
           minFilter: LinearFilter,
-          magFilter: LinearFilter
+          magFilter: LinearFilter,
         }}
       />
     </>
-  )
+  );
 });
 
 export default memo(CursorTrail);
-
